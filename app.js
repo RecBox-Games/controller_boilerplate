@@ -1,11 +1,19 @@
+// -------- GameNite Controller App --------
+
+// ---- Globals ----
 
 var messages = [];
-var drawables = [];
+var text_drawables = [];
+var image_drawables = [];
 var needs_draw = false;
+var logo_image = new Image();
 
+// ---- Messages ----
+
+// handle a single message from the console
 function handleMessage(message) {
-    
-    drawables = [];
+    console.log('got ' + message);
+    text_drawables = [];
     const drbl = {
         type: 'text',
         text: message,
@@ -13,10 +21,11 @@ function handleMessage(message) {
         x: 30,
         y: 100,
     };
-    drawables.push(drbl);
+    text_drawables.push(drbl);
     needs_draw = true;
 }
 
+// Specify the list of messages to be sent to the console
 function outgoingMessages() {
     temp = messages;
     messages = [];
@@ -26,40 +35,66 @@ function outgoingMessages() {
 function getDrawables() {
     if (needs_draw) {
         needs_draw = false;
-        return drawables;
+        return image_drawables.concat(text_drawables);
     }
     return [];
 }
 
+// ---- Touch Handlers ----
+
+// handleClick should only be used for testing in PC browser
 function handleClick(x, y) {
-    let msg = "Click(" + x.toString() + "," + y.toString() + ")";
-    messages.push(msg);
+    handleTouchStart(0, x, y);
 }
 
+// Handle a single touch as it starts
 function handleTouchStart(id, x, y) {
     let msg = "TouchStart(" + x.toString() + "," + y.toString() + ")";
     messages.push(msg);
+    //
+    image_drawables.push({
+        type: 'image',
+        image: logo_image,
+        x: x,
+        y: y,
+        rotation: 0,
+    });
+    needs_draw = true;
 }
 
+// Handle a single touch that has moved
 function handleTouchMove(id, x, y) {
     let msg = "TouchMove(" + x.toString() + "," + y.toString() + ")";
     messages.push(msg);
 }
 
+// Handle a single touch that has ended
 function handleTouchEnd(id, x, y) {
     let msg = "TouchEnd(" + x.toString() + "," + y.toString() + ")";
     messages.push(msg);
 }
 
+// Handle a single touch that has ended in an unexpected way
 function handleTouchCancel(id, x, y) {
     let msg = "TouchCancel(" + x.toString() + "," + y.toString() + ")";
     messages.push(msg);
 }
 
-function controlpadStart() {
+// ---- Start and Update ----
 
+// Called once upon page load (load your resources here)
+function controlpadStart() {
+    logo_image.src = "resources/logo.png";
+    logo_image.onload = function () {
+        console.log('loaded ' + this.width + ', ' + this.height);
+        console.log('natural: ' + this.naturalWidth + ', ' + this.naturalHeight);
+    };
 }
 
+// Called 30 times per second
 function controlpadUpdate() {
-    let x = 0;
+    if (image_drawables.length > 0) {
+        image_drawables[image_drawables.length-1].rotation += 2 * Math.PI / 60;
+        needs_draw = true;
+    }
 }

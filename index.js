@@ -120,14 +120,42 @@ ws.onopen = (event) => {
         handleClick(event.clientX, event.clientY);
     });
 
+    function draw_image(image, x, y, scalex, scaley, cx, cy, rotation) {
+        ctx.setTransform(scalex, 0, 0, scaley, x, y); // sets scale and origin
+        ctx.rotate(rotation);
+        ctx.drawImage(image, cx, cy);
+        ctx.setTransform(1,0,0,1,0,0);
+    }
+
+    function draw_text(text, x, y, font, color) {
+        ctx.fillStyle = color;
+        ctx.font = font;
+        ctx.fillText(text, x, y);
+    }
+    
+    // set defaults then call the appropriate draw function depending on the type
     function draw_drawable(drbl) {
+        if (! drbl.type) { console.log("no type for drawable");return; }
         if (drbl.type == 'text') {
-            ctx.fillStyle = "#000000";
-            console.log('drawing');
-            ctx.font = drbl.font;
-            ctx.fillText(drbl.text, drbl.x, drbl.y);
+            if (! drbl.text) { console.log("no text for text drawable");return; }
+            if (! drbl.x) { drbl.x = 0; }
+            if (! drbl.y) { drbl.y = 0; }
+            if (! drbl.font) { drbl.font = '24px serif'; }
+            if (! drbl.color) { drbl.color = '#000000'; }
+            draw_text(drbl.text, drbl.x, drbl.y, drbl.font, drbl.color);
         } else if (drbl.type == 'image') {
-            // TODO
+            if (! drbl.image) { console.log("no image for image drawable");return; }
+            if (! drbl.image.complete) { return; }
+            if (drbl.image.naturalWidth === 0) { return; }
+            if (! drbl.x) { drbl.x = 0; }
+            if (! drbl.y) { drbl.y = 0; }
+            if (! drbl.scaleX) { drbl.scaleX = 1; }            
+            if (! drbl.scaleY) { drbl.scaleY = 1; }
+            if (! drbl.centerX) { drbl.centerX = -drbl.image.width / 2; }
+            if (! drbl.centerY) { drbl.centerY = -drbl.image.height / 2; }
+            if (! drbl.rotation) { drbl.rotation = 0; }
+            draw_image(drbl.image, drbl.x, drbl.y, drbl.scaleX, drbl.scaleY,
+                       drbl.centerX, drbl.centerY, drbl.rotation);
         } else {
             console.log("Drawable type '" + drbl.type.toString() + "' not implemented");
         }
@@ -144,10 +172,12 @@ ws.onopen = (event) => {
             ctx.fillStyle = "#808080";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             for (drbl of drbls) {
+                
                 draw_drawable(drbl);
             }
         }
     }
-    
+
+    controlpadStart();
     setInterval(tick, 33);
 }
