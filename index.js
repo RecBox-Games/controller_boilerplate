@@ -1,3 +1,5 @@
+
+
 const url_arg_str = window.location.search;
 const url_params = new URLSearchParams(url_arg_str);
 const subid = url_params.get('subid');
@@ -69,41 +71,36 @@ ws.onopen = (event) => {
         console.log("drew");
     }
 
-    const touch_start = (event) => {
-        if (event.touches.length >= 2) {
-            let t1 = event.touches[0];
-            let t2 = event.touches[1];
-            drag_start_x = (t1.pageX + t2.pageX)/2;
-            drag_start_y = (t1.pageY + t2.pageY)/2;
-            draw_dot(drag_start_x, drag_start_y);
+    window.addEventListener("touchstart", (event) => {
+        for (touch of event.changedTouches) {
+            handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
         }
-    };
+    });
+    
+    window.addEventListener("touchmove", (event) => {
+        for (touch of event.changedTouches) {
+            handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
+        }
+    });
+    
+    window.addEventListener("touchend", (event) => {
+        for (touch of event.changedTouches) {
+            handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
+        }
+    });
+    
+    window.addEventListener("touchcancel", (event) => {
+        for (touch of event.changedTouches) {
+            handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
+        }
+    });
 
-    const touch_move = (event) => {
-        if (event.touches.length >= 2) {
-            let t1 = event.touches[0];
-            let t2 = event.touches[1];
-            let drag_x = (t1.pageX + t2.pageX)/2;
-            let drag_y = (t1.pageY + t2.pageY)/2;
-            let dx = drag_x - drag_start_x;
-            let dy = drag_y - drag_start_y;        
-            msg = dx.toString() + ', ' + dy.toString();
+    function tick() {
+        let msgs = outgoingMessages()
+        for (msg of msgs) {
             send_datum(msg);
         }
-    };
-
-    const touch_end = (event) => {
-        send_datum("touch end");
-        draw_dot(event.touch.pageX, event.touch.pageY, 'green');
-    };
-
-    const touch_cancel = (event) => {
-        send_datum("touch cancel");
-    };
-
-    window.addEventListener("touchstart", touch_start);
-    window.addEventListener("touchmove", touch_move);
-    window.addEventListener("touchend", touch_end);
-    window.addEventListener("touchcancel", touch_cancel);
+    }
     
+    setInterval(tick, 33);
 }
