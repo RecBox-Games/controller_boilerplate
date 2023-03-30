@@ -1,3 +1,25 @@
+/*let myArray = []; // Define an empty global array
+
+function createObject() {
+  const myObject = { // Define a new object inside the function
+    id: 1,
+    name: "John Doe",
+    age: 30
+  };
+  
+  myArray.push(myObject); // Append the new object to the global array
+}
+
+createObject(); // Call the function to create and append the object
+console.log(myArray); // Output: [{id: 1, name: "John Doe", age: 30}]
+
+// Access the object from the global array later
+const myObjectFromArray = myArray[0];
+console.log(myObjectFromArray); // Output: {id: 1, name: "John Doe", age: 30}
+console.log('aight');
+*/
+
+
 
 
 const url_arg_str = window.location.search;
@@ -15,6 +37,10 @@ canvas.height = window.innerHeight-1;
 
 ctx.fillStyle = "#808080";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = "#000000";
+ctx.font = "48px serif";
+ctx.fillText("Touch", 100, 100);
+
 
 window.onresize = (e) => {
     canvas.width = window.innerWidth-1;
@@ -50,14 +76,9 @@ ws.onopen = (event) => {
     byte_array[0] = subid;
     ws.send(byte_array.buffer);
 
-    function send_datum(msg) {
-	console.log('sending ' + msg);
-	ws.send(msg);
-    }
-
     ws.addEventListener('message', (event) => {
 	msg = event.data;
-	console.log('<' + msg + '>');
+        handleMessage(msg);
     });
 
     function draw_dot(x, y, color) {
@@ -95,10 +116,36 @@ ws.onopen = (event) => {
         }
     });
 
+    window.addEventListener('click', (event) => {
+        handleClick(event.clientX, event.clientY);
+    });
+
+    function draw_drawable(drbl) {
+        if (drbl.type == 'text') {
+            ctx.fillStyle = "#000000";
+            console.log('drawing');
+            ctx.font = drbl.font;
+            ctx.fillText(drbl.text, drbl.x, drbl.y);
+        } else if (drbl.type == 'image') {
+            // TODO
+        } else {
+            console.log("Drawable type '" + drbl.type.toString() + "' not implemented");
+        }
+    }
+    
     function tick() {
-        let msgs = outgoingMessages()
+        controlpadUpdate();
+        let msgs = outgoingMessages();
         for (msg of msgs) {
-            send_datum(msg);
+            ws.send(msg);
+        }
+        let drbls = getDrawables();
+        if (drbls.length > 0) {
+            ctx.fillStyle = "#808080";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            for (drbl of drbls) {
+                draw_drawable(drbl);
+            }
         }
     }
     
