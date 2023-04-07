@@ -8,6 +8,14 @@ var image_drawables = [];
 var needs_draw = false;
 var logo_image = new Image();
 
+// ---- onFlip ----
+
+function onFlip(width, height) {
+    SCREEN_WIDTH = width;
+    SCREEN_HEIGHT = height;
+    needs_draw = true;
+}
+
 // ---- Messages ----
 
 // handle a single message from the console
@@ -83,7 +91,9 @@ function handleTouchCancel(id, x, y) {
 // ---- Start and Update ----
 
 // Called once upon page load (load your resources here)
-function controlpadStart() {
+function controlpadStart(width, height) {
+    SCREEN_WIDTH = width;
+    SCREEN_HEIGHT = height;
     logo_image.src = "resources/logo.png";
     logo_image.onload = function () {
         console.log('loaded ' + this.width + ', ' + this.height);
