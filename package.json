@@ -1,0 +1,28 @@
+{
+  "name": "controller_boilerplate",
+  "version": "1.0.0",
+  "description": "app.js is provided as an example and should be replaced by the game developer",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RecBox-Games/controller_boilerplate.git"
+  },
+  "directories": {
+	"test": "tests"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RecBox-Games/controller_boilerplate/issues"
+  },
+  "homepage": "https://github.com/RecBox-Games/controller_boilerplate#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.0.4"
+  }
+}
