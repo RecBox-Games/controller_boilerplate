@@ -1,4 +1,4 @@
-import { Rectangle, Circle, Point, PointInCircle, PointInRect } from "../controller_lib/shapes";
+import { Rectangle, Circle, Point,isPoint, isLine, isCircle, isRect, PointInCircle, PointInRect } from "../controller_lib/shapes";
 
 let points:Point[] = [
 		{x: 0,  y: 1},
@@ -22,8 +22,48 @@ let points:Point[] = [
 let should_be_in_circle:Boolean[] = [true, true, true, true, false, false, false, false, false, false, true, true, true, true, true, false]
 let should_be_in_rect:Boolean[] = [false, false, true, false, false, false, false, false, false, false, true, false, true, false, true, true]
 
+interface FakePoint {
+	x: number,
+}
+test("Is Circle", () => {
+	const circle:Circle = {x:0, y: 0, radius:1};
+	const badcircle:Circle = {x:0, y: 0, radius:-42};
+	const rect:Rectangle = {x:0, y: 0, w: 1, h: 0.5};
+	const point:Point = {x: 0, y: 0};
+
+	expect(isCircle(circle)).toBe(true);
+	expect(isCircle(rect)).toBe(false);
+	expect(isCircle(point)).toBe(false);
+	expect(isCircle(badcircle)).toBe(false);
+})
+
+test("Is Point", () => {
+	const circle:Circle = {x:0, y: 0, radius:1};
+	const badcircle:Circle = {x:0, y: 0, radius:-42};
+	const rect:Rectangle = {x:0, y: 0, w: 1, h: 0.5};
+	const point:Point = {x: 0, y: 0};
+	const fakepoint:FakePoint = {x: 0};
+
+	expect(isPoint(circle)).toBe(false);
+	expect(isPoint(rect)).toBe(false);
+	expect(isPoint(point)).toBe(true);
+	expect(isPoint(fakepoint)).toBe(false);
+})
+
+test("Is Rect", () => {
+	const circle:Circle = {x:0, y: 0, radius:1};
+	const rect:Rectangle = {x:0, y: 0, w: 1, h: 0.5};
+	const point:Point = {x: 0, y: 0};
+	const badrect:Rectangle = {x: 0, y: 0, w: -1, h: 2};
+
+	expect(isRect(circle)).toBe(false);
+	expect(isRect(rect)).toBe(true);
+	expect(isRect(point)).toBe(false);
+	expect(isRect(badrect)).toBe(false);
+})
+
 test("Circle Tests", () => {
-	let circle:Circle = {x:0, y: 0, radius:1};
+	const circle:Circle = {x:0, y: 0, radius:1};
 
 	for (let idx in should_be_in_circle)
 	{
@@ -33,7 +73,7 @@ test("Circle Tests", () => {
 })
 
 test("Rect test", () => {
-	let rect:Rectangle = {x:0, y: 0, w: 1, h: 0.5};
+	const rect:Rectangle = {x:0, y: 0, w: 1, h: 0.5};
 
 		for (let idx in should_be_in_rect)
 	{

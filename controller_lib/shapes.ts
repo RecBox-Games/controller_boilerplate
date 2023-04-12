@@ -22,6 +22,34 @@ interface Line {
 }
 
 
+const checkAllFieldsExist = (correct, compare) => {
+	const correctKeys = Object.keys(correct);
+	const compKeys = Object.keys(compare);
+	return  correctKeys.every((val, i) => val == compKeys[i]) && correctKeys.length == compKeys.length;
+}
+
+const isPoint = (compare): boolean => {
+	const correct:Point = {x: 0, y: 0};
+
+	return checkAllFieldsExist(correct, compare)
+}
+const isLine = (compare): boolean => {
+	const correct:Line = {coordA: {x:0, y: 0}, coordB: {x:0, y:0}};
+
+	return checkAllFieldsExist(correct, compare)
+}
+const isRect = (compare): boolean => {
+	const correct:Rectangle = {x: 0, y: 0, w: 0, h: 0};
+	return checkAllFieldsExist(correct, compare) && compare.w >= 0 && compare.h >= 0
+}
+
+const isCircle = (compare): boolean => {
+	const correct:Circle = {x: 0, y: 0, radius: 0};
+
+	return checkAllFieldsExist(correct, compare) && compare.radius >= 0;
+}
+
+
 const PointInCircle = (point:Point, circle:Circle): boolean =>  {
 	return Math.sqrt( //??? IDK if this more comprehensible than a single line ?
 			Math.pow(point.x - circle.x, 2)
@@ -37,4 +65,4 @@ const PointInRect = (point: Point, rect:Rectangle) : boolean => {
 		   point.y <= rect.y + rect.h;
 }
 
-export {Point, Circle, Rectangle, Line, PointInCircle, PointInRect};
+export {Point, Circle, Rectangle, Line, isPoint, isLine, isRect, isCircle, PointInCircle, PointInRect};
