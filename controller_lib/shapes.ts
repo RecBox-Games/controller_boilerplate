@@ -22,7 +22,7 @@ interface Line {
 }
 
 
-const PointInCircle = (point:Point, circle:Circle): Boolean =>  {
+const PointInCircle = (point:Point, circle:Circle): boolean =>  {
 	return Math.sqrt( //??? IDK if this more comprehensible than a single line ?
 			Math.pow(point.x - circle.x, 2)
 					+
@@ -30,7 +30,7 @@ const PointInCircle = (point:Point, circle:Circle): Boolean =>  {
 			) <= circle.radius;
 }
 
-const PointInRect = (point: Point, rect:Rectangle) : Boolean => {
+const PointInRect = (point: Point, rect:Rectangle) : boolean => {
 	return point.x >= rect.x &&
 		   point.y >= rect.y &&
 		   point.x <= rect.x + rect.w &&
