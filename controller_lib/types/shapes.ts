@@ -25,22 +25,22 @@ interface Line {
 
 
 
-const isPoint = (compare): boolean => {
+const isPoint = (compare:any): boolean => {
 	const correct:Point = {x: 0, y: 0};
 
 	return checkAllFieldsExist(correct, compare)
 }
-const isLine = (compare): boolean => {
+const isLine = (compare:any): boolean => {
 	const correct:Line = {coordA: {x:0, y: 0}, coordB: {x:0, y:0}};
 
 	return checkAllFieldsExist(correct, compare)
 }
-const isRect = (compare): boolean => {
+const isRect = (compare:any): boolean => {
 	const correct:Rectangle = {x: 0, y: 0, w: 0, h: 0};
 	return checkAllFieldsExist(correct, compare) && compare.w >= 0 && compare.h >= 0
 }
 
-const isCircle = (compare): boolean => {
+const isCircle = (compare:any): boolean => {
 	const correct:Circle = {x: 0, y: 0, radius: 0};
 
 	return checkAllFieldsExist(correct, compare) && compare.radius >= 0;

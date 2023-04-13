@@ -35,6 +35,8 @@ class Triggerable {
 			this._state = TRIGGER_HELD;
 		else if (this._state == TRIGGER_HELD && current == false)
 			this._state = TRIGGER_END;
+		else
+			this._state = NONE;
 	}
 }
 
@@ -62,7 +64,7 @@ class  Button extends Triggerable{
 	_touchEndCallback: Function;
 
 
-	constructor(boundingBox, hoverCallback, touchStartCallback, touchEndCallback) {
+	constructor(boundingBox: Rectangle | Circle, hoverCallback:Function, touchStartCallback:Function, touchEndCallback:Function) {
 		if (isRect(boundingBox))
 			super(checkCircleTriggered, handleButtonTriggered)
 		else if (isCircle(boundingBox))

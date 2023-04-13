@@ -3,9 +3,6 @@
 // ---- Globals ----
 
 var messages = [];
-var text_drawables = [];
-var image_drawables = [];
-var needs_draw = false;
 var logo_image = new Image();
 
 // ---- onFlip ----
@@ -40,53 +37,17 @@ function outgoingMessages() {
     return temp;
 }
 
-function getDrawables() {
-    if (needs_draw) {
-        needs_draw = false;
-        return image_drawables.concat(text_drawables);
-    }
-    return [];
-}
+// function getDrawables() {
+//     if (needs_draw) {
+//         needs_draw = false;
+//         return image_drawables.concat(text_drawables);
+//     }
+//     return [];
+// }
 
-// ---- Touch Handlers ----
+// // ---- Touch Handlers ----
 
 // handleClick should only be used for testing in PC browser
-function handleClick(x, y) {
-    handleTouchStart(0, x, y);
-}
-
-// Handle a single touch as it starts
-function handleTouchStart(id, x, y) {
-    let msg = "TouchStart(" + x.toString() + "," + y.toString() + ")";
-    messages.push(msg);
-    //
-    image_drawables.push({
-        type: 'image',
-        image: logo_image,
-        x: x,
-        y: y,
-        rotation: 0,
-    });
-    needs_draw = true;
-}
-
-// Handle a single touch that has moved
-function handleTouchMove(id, x, y) {
-    let msg = "TouchMove(" + x.toString() + "," + y.toString() + ")";
-    messages.push(msg);
-}
-
-// Handle a single touch that has ended
-function handleTouchEnd(id, x, y) {
-    let msg = "TouchEnd(" + x.toString() + "," + y.toString() + ")";
-    messages.push(msg);
-}
-
-// Handle a single touch that has ended in an unexpected way
-function handleTouchCancel(id, x, y) {
-    let msg = "TouchCancel(" + x.toString() + "," + y.toString() + ")";
-    messages.push(msg);
-}
 
 // ---- Start and Update ----
 
@@ -102,9 +63,3 @@ function controlpadStart(width, height) {
 }
 
 // Called 30 times per second
-function controlpadUpdate() {
-    if (image_drawables.length > 0) {
-        image_drawables[image_drawables.length-1].rotation += 2 * Math.PI / 60;
-        needs_draw = true;
-    }
-}

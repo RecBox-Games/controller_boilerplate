@@ -1,140 +1,125 @@
-import { Rectangle, Circle } from "./shapes";
-
+import { Rectangle, Circle, Point, isCircle, isRect } from "./shapes";
+import { Context } from "./context";
+//  text : x, y, font, text,, center, color
+//  imag : x, y, img, scale, center, rotation
+//  rect : x,y, w, h, color, outline
 
 interface DrawableRect extends Rectangle {
 	x: number;
 	y: number;
 	w: number;
 	h: number;
-	color: string | number;
-	outline: number;
+	color: string;
+	stroke: number;
 }
-interface DrawablCircle extends Rectangle {
+
+interface DrawableText {
+	x: number;
+	y: number;
+	center: Point;
+	font: string;
+	color: string;
+}
+
+interface DrawableImage {
 	x: number;
 	y: number;
 	w: number;
 	h: number;
-	color: string | number;
-	outline: number;
-}
-interface DrawableText extends Rectangle {
-	x: number;
-	y: number;
-	w: number;
-	h: number;
-	color: string | number;
-	outline: number;
+	scale: number;
+	rotation: number;
 }
 
-const isDrawableText = () => {
-	const exampleText: DrawableText = {}
+// ---------------- ???? ------------------
+class Drawable {
+	_coord:Point = {x:0, y:0};
+	_dimensions:Point = {x:0, y:0}
+	_center: Point = {x:0, y:0};
+	_scale: Point = {x: 1, y:1};
+	_color: string = '#000000';
+	_font: string = '24px serif';
+	_rotation: number = 0;
+	_stroke: number = 1;
+	_ctx:Context;
+	object: HTMLImageElement | string | Circle | Rectangle;
+	_draw: Function;
+
+	constructor(ctx:Context, image:HTMLImageElement, coord:Point, scale:Point, dimensions:Point);
+	constructor(ctx:Context, text:string,  coord:Point, color:string, font:string);
+	constructor(ctx:Context, rect:Rectangle, color:string, stroke:number);
+	// constructor(circle:Circle, color:string, stroke:number);
+	//What even am I doing
+	constructor(ctx:Context, object:HTMLImageElement | string | Circle | Rectangle, arg1:any, arg2:any, arg3?:any) {
+		this._ctx = ctx;
+		this.object = object;
+		this._draw = () => {};
+		this.recycle(object, arg1, arg2, arg3);
+	}
+
+	recycle(image:any, coord:Point, scale:Point, dimensions:Point) :void;
+	recycle(text:any,  coord:Point, color:string, font:string) :void;
+	recycle(rect:any, color:string, stroke:number) : void;
+
+	recycle(object:any, arg1:any, arg2:any, arg3?:any) : void
+	{
+		this.object = object;
+		if (typeof(object) === typeof(HTMLImageElement))//I don't know if this works but I dont see why not
+		{
+			this._coord = arg1;
+			this._scale = arg2;
+			this._dimensions
+			this._draw = draw_image;
+		}
+		else if (typeof(object) === 'string')
+		{
+			this._coord = arg1;
+			this._color = arg2;
+			this._font = arg3;
+			this._draw = draw_text;
+		}
+		else if (isRect(object))
+		{
+			const rect:Rectangle = object as Rectangle;
+			this._coord = <Point>{x:rect.x, y:rect.y};
+			this._dimensions
+			this._color = arg1;
+			this._stroke = arg2;
+			this._draw = draw_rect;
+		}
+	}
+
+	set coord (new_coords:Point) {this._coord = new_coords};
+	set dimension (new_dimensions:Point) {this._dimensions = new_dimensions};
 }
 
-let test_array:Number[] = [];
-
- const get_test_arr = () => {
-	return test_array;
+function draw_rect(context:Context, rect:Drawable) {
+	if (rect._stroke == 0) {
+		context.ctx.fillStyle = rect._color;
+		context.ctx.fillRect(rect._coord.x, rect._coord.y, rect._dimensions.x, rect._dimensions.y);
+	} else {
+		context.ctx.strokeStyle = rect._color;
+		context.ctx.lineWidth = rect._stroke;
+		context.ctx.strokeRect(rect._coord.x, rect._coord.y, rect._dimensions.x, rect._dimensions.y);
+	}
 }
 
- const  test_fn = () =>
-{
-	return test_array.length;
-}
- const  update_test_fn = () =>
-{
-	return test_array.push(42);
+ function draw_image(context:Context, img:Drawable) {
+	context.ctx.setTransform(img._scale.x, 0, 0, img._scale.y, img._coord.x, img._coord.y); // sets scale and origin
+	context.ctx.rotate(img._rotation);
+	context.ctx.drawImage(img.object as HTMLImageElement, img._coord.x, img._coord.y);
+	context.ctx.setTransform(1,0,0,1,0,0);
 }
 
-export {get_test_arr, test_fn, update_test_fn}
-function draw_rect(rect:Rectangle, color, outline) {
-        if (outline == 0) {
-            ctx.fillStyle = color;
-            ctx.fillRect(x, y, w, h);
-        } else {
-            ctx.strokeStyle = color;
-            ctx.lineWidth = outline;
-            ctx.strokeRect(x, y, w, h);
-        }
-    }
+function draw_text(context:Context, text:Drawable) {
+	// if (centeredX) {
+	// 	x -= context.ctx.measureText(text).width / 2;
+	// }
+	// if (centeredY) {
+	// 	y += parseInt(context.ctx.font) / 3;
+	// }
+	context.ctx.fillStyle = text._color;
+	context.ctx.fillText(text.object as string, text._coord.x, text._coord.y);
+}
 
- function draw_image(image, x, y, scalex, scaley, cx, cy, rotation) {
-        ctx.setTransform(scalex, 0, 0, scaley, x, y); // sets scale and origin
-        ctx.rotate(rotation);
-        ctx.drawImage(image, cx, cy);
-        ctx.setTransform(1,0,0,1,0,0);
-    }
 
-    function draw_text(text, x, y, font, color, centeredX, centeredY) {
-        ctx.font = font;
-        if (centeredX) {
-            x -= ctx.measureText(text).width / 2;
-        }
-        if (centeredY) {
-            y += parseInt(ctx.font) / 3;
-        }
-        ctx.fillStyle = color;
-        ctx.fillText(text, x, y);
-    }
-    // set defaults then call the appropriate draw function depending on the type
-    function draw_drawable(drbl) {
-		// Object.assign(
-		// 	{
-		// 		//your defaults here
-		// 	},
-		// 	...drbl
-		// )
-
-        if (! drbl) { console.log("none object for drawable");return; }
-        if (! drbl.type) { console.log("no type for drawable");return; }
-        if (drbl.type == 'text') {
-            if (! drbl.text) { console.log("no text for text drawable");return; }
-            if (! drbl.x) { drbl.x = 0; }
-            if (! drbl.y) { drbl.y = 0; }
-            if (! drbl.centeredX) { drbl.centeredX = false; }
-            if (! drbl.centeredY) { drbl.centeredY = false; }
-            if (! drbl.font) { drbl.font = '24px serif'; }
-            if (! drbl.color) { drbl.color = '#000000'; }
-            draw_text(drbl.text, drbl.x, drbl.y, drbl.font, drbl.color,
-                      drbl.centeredX, drbl.centeredY);
-        } else if (drbl.type == 'image') {
-            if (! drbl.image) { console.log("no image for image drawable");return; }
-            if (! drbl.image.complete) { return; }
-            if (drbl.image.naturalWidth === 0) { return; }
-            if (! drbl.x) { drbl.x = 0; }
-            if (! drbl.y) { drbl.y = 0; }
-            if (! drbl.scaleX) { drbl.scaleX = 1; }
-            if (! drbl.scaleY) { drbl.scaleY = 1; }
-            if (! drbl.centeredX) { drbl.centeredX = -drbl.image.width / 2; }
-            if (! drbl.centeredY) { drbl.centeredY = -drbl.image.height / 2; }
-            if (! drbl.rotation) { drbl.rotation = 0; }
-            draw_image(drbl.image, drbl.x, drbl.y, drbl.scaleX, drbl.scaleY,
-                       drbl.centeredX, drbl.centeredY, drbl.rotation);
-        } else if (drbl.type == 'rect') {
-            if (! drbl.x) { drbl.x = 0; }
-            if (! drbl.y) { drbl.y = 0; }
-            if (! drbl.w) { drbl.x = 10; }
-            if (! drbl.h) { drbl.y = 10; }
-            if (! drbl.color) { drbl.color = '#000000'; }
-            if (! drbl.outline) { drbl.outline = 0; }
-            draw_rect(drbl.x, drbl.y, drbl.w, drbl.h, drbl.color, drbl.outline);
-        } else {
-            console.log("Drawable type '" + drbl.type.toString() + "' not implemented");
-        }
-    }
-
-    function tick() {
-        controlpadUpdate();
-        let msgs = outgoingMessages();
-        for (msg of msgs) {
-            console.log("sending <" + msg + ">");
-            ws.send(msg);
-        }
-        let drbls = getDrawables();
-        if (drbls.length > 0) {
-            ctx.fillStyle = "#808080";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            for (drbl of drbls) {
-                draw_drawable(drbl);
-            }
-        }
-    }
+export {Drawable, DrawableImage, DrawableRect, DrawableText}

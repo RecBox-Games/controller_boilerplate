@@ -1,4 +1,4 @@
-import { Rectangle, Circle, Point,isPoint, isLine, isCircle, isRect, PointInCircle, PointInRect } from "../controller_lib/shapes";
+import { Rectangle, Circle, Point,isPoint, isLine, isCircle, isRect, PointInCircle, PointInRect } from "../controller_lib/types/shapes";
 
 let points:Point[] = [
 		{x: 0,  y: 1},
