@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "app.js is provided as an example and should be replaced by the game developer",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "jest"
   },
@@ -11,7 +12,7 @@
     "url": "git+https://github.com/RecBox-Games/controller_boilerplate.git"
   },
   "directories": {
-	"test": "tests"
+    "test": "tests"
   },
   "keywords": [],
   "author": "",
@@ -24,5 +25,9 @@
     "@types/jest": "^29.5.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "esm": "^3.2.25",
+    "express": "^4.18.2"
   }
 }

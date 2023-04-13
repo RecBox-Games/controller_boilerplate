@@ -1,26 +1,19 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.addIList = exports.addCList = exports.printCList = exports.printIList = void 0;
 let Idrawables = [];
 let Cdrawables = [];
-const printIList = () => {
+export const printIList = () => {
     for (let item of Idrawables)
         console.log(item);
 };
-exports.printIList = printIList;
-const printCList = () => {
+export const printCList = () => {
     for (let item of Idrawables)
         console.log(item);
 };
-exports.printCList = printCList;
-const addCList = (item) => {
+export const addCList = (item) => {
     Cdrawables.push(item);
 };
-exports.addCList = addCList;
-const addIList = (item) => {
+export const addIList = (item) => {
     Idrawables.push(item);
 };
-exports.addIList = addIList;
 // // set defaults then call the appropriate draw function depending on the type
 // function draw_drawable(drbl) {
 // 	// Object.assign(

@@ -1,20 +1,20 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.Drawable = void 0;
-const shapes_1 = require("./shapes");
+import { isRect } from "./shapes";
 // ---------------- ???? ------------------
 class Drawable {
+    _coord = { x: 0, y: 0 };
+    _dimensions = { x: 0, y: 0 };
+    _center = { x: 0, y: 0 };
+    _scale = { x: 1, y: 1 };
+    _color = '#000000';
+    _font = '24px serif';
+    _rotation = 0;
+    _stroke = 1;
+    _ctx;
+    object;
+    _draw;
     // constructor(circle:Circle, color:string, stroke:number);
     //What even am I doing
     constructor(ctx, object, arg1, arg2, arg3) {
-        this._coord = { x: 0, y: 0 };
-        this._dimensions = { x: 0, y: 0 };
-        this._center = { x: 0, y: 0 };
-        this._scale = { x: 1, y: 1 };
-        this._color = '#000000';
-        this._font = '24px serif';
-        this._rotation = 0;
-        this._stroke = 1;
         this._ctx = ctx;
         this.object = object;
         this._draw = () => { };
@@ -35,7 +35,7 @@ class Drawable {
             this._font = arg3;
             this._draw = draw_text;
         }
-        else if ((0, shapes_1.isRect)(object)) {
+        else if (isRect(object)) {
             const rect = object;
             this._coord = { x: rect.x, y: rect.y };
             this._dimensions;
@@ -49,7 +49,6 @@ class Drawable {
     set dimension(new_dimensions) { this._dimensions = new_dimensions; }
     ;
 }
-exports.Drawable = Drawable;
 function draw_rect(context, rect) {
     if (rect._stroke == 0) {
         context.ctx.fillStyle = rect._color;
@@ -77,3 +76,4 @@ function draw_text(context, text) {
     context.ctx.fillStyle = text._color;
     context.ctx.fillText(text.object, text._coord.x, text._coord.y);
 }
+export { Drawable };

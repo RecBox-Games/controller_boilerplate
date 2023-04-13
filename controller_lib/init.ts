@@ -12,7 +12,7 @@ let drag_start_y = 0;
 // websocket and main
 export const get_context = () :Context => context;
 
-window.onload = () => {
+export const init_context = () => {
 	const canvas:HTMLCanvasElement = document.querySelector("canvas") as HTMLCanvasElement;
 	context = {
 		canvas: canvas,
@@ -30,7 +30,6 @@ window.onload = () => {
 	context.ctx.font = "48px serif";
 	context.ctx.fillText("Touch", 100, 100);
 }
-
 // wait for websocket to connect
 window.onresize = screenChange;
 window.onorientationchange = screenChange;

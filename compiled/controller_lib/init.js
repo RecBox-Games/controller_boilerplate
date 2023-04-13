@@ -1,15 +1,11 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.get_context = void 0;
-const utils_1 = require("./utils");
+import { handleTouchCancel, handleClick, handleTouchEnd, handleTouchMove, handleTouchStart } from "./utils";
 let context;
 // globals
 let drag_start_x = 0;
 let drag_start_y = 0;
 // websocket and main
-const get_context = () => context;
-exports.get_context = get_context;
-window.onload = () => {
+export const get_context = () => context;
+export const init_context = () => {
     const canvas = document.querySelector("canvas");
     context = {
         canvas: canvas,
@@ -39,29 +35,29 @@ function screenChange() {
 }
 window.addEventListener("touchstart", (event) => {
     for (let touch of event.changedTouches) {
-        (0, utils_1.handleTouchStart)(touch.identifier, touch.pageX, touch.pageY);
+        handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
     }
     console.log("touch start");
 });
 window.addEventListener("touchmove", (event) => {
     for (let touch of event.changedTouches) {
-        (0, utils_1.handleTouchMove)(touch.identifier, touch.pageX, touch.pageY);
+        handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
     }
     console.log("touch move");
 });
 window.addEventListener("touchend", (event) => {
     for (let touch of event.changedTouches) {
-        (0, utils_1.handleTouchEnd)(touch.identifier, touch.pageX, touch.pageY);
+        handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
     }
     console.log("touch end");
 });
 window.addEventListener("touchcancel", (event) => {
     for (let touch of event.changedTouches) {
-        (0, utils_1.handleTouchCancel)(touch.identifier, touch.pageX, touch.pageY);
+        handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
     }
     console.log("touch cancel");
 });
 window.addEventListener('click', (event) => {
-    (0, utils_1.handleClick)(event.clientX, event.clientY);
+    handleClick(event.clientX, event.clientY);
     console.log("click ONE");
 });
