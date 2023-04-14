@@ -1,5 +1,5 @@
-import { Rectangle, Circle, Point, isCircle, isRect, PointInCircle, PointInRect } from "./shapes";
-import { NONE, TRIGGER_END, TRIGGER_HELD, TRIGGER_START } from "../macros";
+import { Rectangle, Circle, Point, isCircle, isRect, PointInCircle, PointInRect } from "./shapes.js";
+import { NONE, TRIGGER_END, TRIGGER_HELD, TRIGGER_START } from "../macros.js";
 
 class Triggerable {
 	_active: boolean = true;
@@ -76,8 +76,6 @@ class  Button extends Triggerable{
 		this._touchStartCallback = touchStartCallback;
 		this._touchEndCallback = touchEndCallback;
 	}
-
-
 }
 
 export {Triggerable, Button}

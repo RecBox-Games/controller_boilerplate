@@ -1,5 +1,5 @@
-import { init_context } from "./controller_lib/init";
-import { cp_update } from "./controller_lib/update";
+import { init_context } from "./controller_lib/init.js";
+import { cp_update } from "./controller_lib/update.js";
 
 // interface BoardTile {
 // 	drawab
@@ -17,7 +17,8 @@ import { cp_update } from "./controller_lib/update";
 const app = () => {
 
 	cp_update();
-	console.log("Hello");
+	// console.log("Hello");
+	window.requestAnimationFrame(app);
 }
 
 window.onload = () => {

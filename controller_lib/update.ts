@@ -1,7 +1,11 @@
-import { printCList, printIList } from "./draw";
+import { drawClist, drawIlist, printCList, printIList } from "./draw.js";
 
 export const cp_update = () =>
 {
-	printCList();
-	printIList();
+	// console.log("update")
+	// printCList();
+	// printIList();
+	// drawClist();
+
+	drawIlist();
 }

@@ -1,5 +1,5 @@
-import { isCircle, isRect, PointInCircle, PointInRect } from "./shapes";
-import { NONE, TRIGGER_END, TRIGGER_HELD, TRIGGER_START } from "../macros";
+import { isCircle, isRect, PointInCircle, PointInRect } from "./shapes.js";
+import { NONE, TRIGGER_END, TRIGGER_HELD, TRIGGER_START } from "../macros.js";
 class Triggerable {
     _active = true;
     _state;

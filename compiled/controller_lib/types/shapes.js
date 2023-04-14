@@ -1,4 +1,4 @@
-import { checkAllFieldsExist } from "../utils";
+import { checkAllFieldsExist } from "../utils.js";
 const isPoint = (compare) => {
     const correct = { x: 0, y: 0 };
     return checkAllFieldsExist(correct, compare);

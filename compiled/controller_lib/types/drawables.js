@@ -1,4 +1,7 @@
-import { isRect } from "./shapes";
+import { isRect } from "./shapes.js";
+export const DEFAULT_DRAWABLE_RECT = { x: 0, y: 0, w: 0, h: 0, color: '#000000', stroke: 0 };
+export const DEFAULT_DRAWABLE_TEXT = { x: 0, y: 0, font: '24px serif', color: '#000000', text: "no_text" };
+export const DEFAULT_DRAWABLE_IMG = { x: 0, y: 0, w: 100, h: 100, scale: 1, rotation: 0, image: null };
 // ---------------- ???? ------------------
 class Drawable {
     _coord = { x: 0, y: 0 };
@@ -11,13 +14,13 @@ class Drawable {
     _stroke = 1;
     _ctx;
     object;
-    _draw;
+    draw;
     // constructor(circle:Circle, color:string, stroke:number);
     //What even am I doing
     constructor(ctx, object, arg1, arg2, arg3) {
         this._ctx = ctx;
         this.object = object;
-        this._draw = () => { };
+        this.draw = () => { };
         this.recycle(object, arg1, arg2, arg3);
     }
     recycle(object, arg1, arg2, arg3) {
@@ -27,13 +30,13 @@ class Drawable {
             this._coord = arg1;
             this._scale = arg2;
             this._dimensions;
-            this._draw = draw_image;
+            this.draw = draw_image;
         }
         else if (typeof (object) === 'string') {
             this._coord = arg1;
             this._color = arg2;
             this._font = arg3;
-            this._draw = draw_text;
+            this.draw = draw_text;
         }
         else if (isRect(object)) {
             const rect = object;
@@ -41,7 +44,7 @@ class Drawable {
             this._dimensions;
             this._color = arg1;
             this._stroke = arg2;
-            this._draw = draw_rect;
+            this.draw = draw_rect;
         }
     }
     set coord(new_coords) { this._coord = new_coords; }

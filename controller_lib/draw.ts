@@ -1,16 +1,42 @@
-import { Drawable, DrawableImage, DrawableRect, DrawableText } from "./types/drawables";
+import { get_context } from "./init.js";
+import { Context } from "./types/context.js";
+import { DEFAULT_DRAWABLE_IMG, DEFAULT_DRAWABLE_RECT, DEFAULT_DRAWABLE_TEXT, Drawable, DrawableImage, DrawableRect, DrawableText } from "./types/drawables.js";
+import { checkAllFieldsExist } from "./utils.js";
 
 let Idrawables: (DrawableImage | DrawableRect | DrawableText) [] = []
 let Cdrawables:Drawable[] = []
 
 export const printIList = () => {
+	console.log("Ilist",Idrawables)
 	for (let item of Idrawables)
 		console.log(item)
 }
 
 export const printCList = () => {
+	console.log("C lists", Cdrawables)
 	for (let item of Idrawables)
 		console.log(item)
+}
+
+export const drawIlist = () => {
+	let ctx:Context = get_context();
+
+	// printIList();
+	 ctx.ctx.fillStyle = "#808080";
+    ctx.ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	for (let item of Idrawables)
+	{
+		draw_drawable(ctx, item);
+	}
+}
+
+export const drawClist = () => {
+	let ctx:Context = get_context();
+
+	for (let item of Cdrawables)
+	{
+		item.draw(ctx, item.object);
+	}
 }
 
 export const addCList = (item:Drawable) => {
@@ -19,6 +45,43 @@ export const addCList = (item:Drawable) => {
 export const addIList = (item:DrawableImage | DrawableRect | DrawableText) => {
 	Idrawables.push(item);
 }
+
+export const draw_drawable = (ctx:Context, drawable:DrawableImage | DrawableRect | DrawableText) =>
+{
+
+    // console.log('resize fill', ctx);
+	if (checkAllFieldsExist(DEFAULT_DRAWABLE_RECT,drawable))
+	{
+		const rect = drawable as DrawableRect;
+		if (rect.stroke == 0) {
+			ctx.ctx.fillStyle = rect.color;
+			ctx.ctx.fillRect(rect.x, rect.y, rect.w, rect.h);
+		} else {
+			ctx.ctx.strokeStyle = rect.color;
+			ctx.ctx.lineWidth = rect.stroke;
+			ctx.ctx.strokeRect(rect.x, rect.y, rect.w, rect.h);
+		}
+	}
+	else if (checkAllFieldsExist(DEFAULT_DRAWABLE_IMG,drawable))
+	{
+		const img = drawable as DrawableImage;
+		if (img.image)
+		{
+			ctx.ctx.setTransform(img.scale, 0, 0, img.scale, 0, 0); // sets scale and origin
+			ctx.ctx.rotate(img.rotation);
+			ctx.ctx.drawImage(img.image, img.x, img.y);
+			ctx.ctx.setTransform(1,0,0,1,0,0);
+		}
+	}
+	else if (checkAllFieldsExist(DEFAULT_DRAWABLE_TEXT,drawable))
+	{
+		const text = drawable as DrawableText;
+		ctx.ctx.fillStyle = text.color;
+		ctx.ctx.fillText(text.text as string, text.x, text.y);
+	}
+	else throw "Drawable types matches none"
+}
+
     // // set defaults then call the appropriate draw function depending on the type
     // function draw_drawable(drbl) {
 	// 	// Object.assign(

@@ -1,8 +1,10 @@
-import { Point } from "./shapes"
+import { Point } from "./shapes.js"
 
 export interface Context {
 	canvas: HTMLCanvasElement,
 	ctx: CanvasRenderingContext2D,
 	dimensions: Point,
-	backgroundColor: string
+	ws:WebSocket,
+	subid:string,
+	box_ip:string
 }

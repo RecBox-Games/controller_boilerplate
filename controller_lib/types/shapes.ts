@@ -1,4 +1,4 @@
-import { checkAllFieldsExist } from "../utils"
+import { checkAllFieldsExist } from "../utils.js"
 
 interface Point {
 	x: number,
@@ -22,8 +22,6 @@ interface Line {
 	coordA: Point,
 	coordB: Point,
 }
-
-
 
 const isPoint = (compare:any): boolean => {
 	const correct:Point = {x: 0, y: 0};

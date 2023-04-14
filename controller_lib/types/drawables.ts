@@ -1,5 +1,5 @@
-import { Rectangle, Circle, Point, isCircle, isRect } from "./shapes";
-import { Context } from "./context";
+import { Rectangle, Circle, Point, isCircle, isRect } from "./shapes.js";
+import { Context } from "./context.js";
 //  text : x, y, font, text,, center, color
 //  imag : x, y, img, scale, center, rotation
 //  rect : x,y, w, h, color, outline
@@ -16,9 +16,9 @@ interface DrawableRect extends Rectangle {
 interface DrawableText {
 	x: number;
 	y: number;
-	center: Point;
 	font: string;
 	color: string;
+	text:string;
 }
 
 interface DrawableImage {
@@ -26,10 +26,14 @@ interface DrawableImage {
 	y: number;
 	w: number;
 	h: number;
+	image: HTMLImageElement | null;
 	scale: number;
 	rotation: number;
 }
 
+export const DEFAULT_DRAWABLE_RECT:DrawableRect = {x: 0, y: 0, w : 0, h : 0, color : '#000000', stroke : 0};
+export const DEFAULT_DRAWABLE_TEXT:DrawableText = {x: 0, y: 0, font: '24px serif', color : '#000000', text: "no_text"};
+export const DEFAULT_DRAWABLE_IMG:DrawableImage = {x: 0, y: 0, w : 100, h : 100, scale : 1, rotation: 0, image: null};
 // ---------------- ???? ------------------
 class Drawable {
 	_coord:Point = {x:0, y:0};
@@ -42,7 +46,7 @@ class Drawable {
 	_stroke: number = 1;
 	_ctx:Context;
 	object: HTMLImageElement | string | Circle | Rectangle;
-	_draw: Function;
+	draw: Function;
 
 	constructor(ctx:Context, image:HTMLImageElement, coord:Point, scale:Point, dimensions:Point);
 	constructor(ctx:Context, text:string,  coord:Point, color:string, font:string);
@@ -52,7 +56,7 @@ class Drawable {
 	constructor(ctx:Context, object:HTMLImageElement | string | Circle | Rectangle, arg1:any, arg2:any, arg3?:any) {
 		this._ctx = ctx;
 		this.object = object;
-		this._draw = () => {};
+		this.draw = () => {};
 		this.recycle(object, arg1, arg2, arg3);
 	}
 
@@ -68,14 +72,14 @@ class Drawable {
 			this._coord = arg1;
 			this._scale = arg2;
 			this._dimensions
-			this._draw = draw_image;
+			this.draw = draw_image;
 		}
 		else if (typeof(object) === 'string')
 		{
 			this._coord = arg1;
 			this._color = arg2;
 			this._font = arg3;
-			this._draw = draw_text;
+			this.draw = draw_text;
 		}
 		else if (isRect(object))
 		{
@@ -84,7 +88,7 @@ class Drawable {
 			this._dimensions
 			this._color = arg1;
 			this._stroke = arg2;
-			this._draw = draw_rect;
+			this.draw = draw_rect;
 		}
 	}
 
