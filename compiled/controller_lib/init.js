@@ -20,30 +20,22 @@ export const init_context = () => {
         subid: subid,
         box_ip: box_ip
     };
-    // if (ws.readyState == WebSocket.CLOSED) {
-    //     ws = new WebSocket("ws://" + box_ip + ":50079");
-    // }
     context.canvas.width = document.body.clientWidth;
     context.canvas.height = document.body.clientHeight;
     context.dimensions.x = document.body.clientWidth;
     context.dimensions.y = document.body.clientHeight;
     context.ctx.fillStyle = "#808080";
     context.ctx.fillRect(0, 0, context.canvas.width, context.canvas.height);
-    // window.onload = () => {
-    // 	context.dimensions.x = window.innerWidth;
-    // 	context.dimensions.y = window.innerHeight;
-    //     context.canvas.width = document.body.clientWidth;
-    //     context.canvas.height = document.body.clientWidth;
-    // }
+
     context.ws.onclose = (event) => {
         console.log("closed websocket");
         ws = new WebSocket("ws://" + box_ip + ":50079");
     };
     context.ws.onopen = (event) => {
         console.log("openned websocket");
-        // let byte_array: Uint8Array = new Uint8Array(1);
-        // byte_array[0] = subid;
-        // context.ws.send(byte_array.buffer);
+        let byte_array = new Uint8Array(1);
+        byte_array[0] = subid;
+        context.ws.send(byte_array.buffer);
         context.ws.addEventListener('message', (event) => {
             // let msg = event.data;
             //     handleMessage(msg);
