@@ -1,5 +1,10 @@
+// import { DEFAULTT_BUTTON_RECT, buttons_add } from "./button.js";
+import { buttons_add } from "./button.js";
+import { drawablesAdd } from "./draw.js";
 import { Context } from "./types/context.js";
-import { Point } from "./types/shapes.js";
+import { DEFAULT_DRAWABLE_RECT, DrawableRect } from "./types/drawables.js";
+import { Point, Rectangle } from "./types/shapes.js";
+import { Button } from "./types/triggerable.js";
 import { handleTouchCancel, handleClick, handleTouchEnd, handleTouchMove, handleTouchStart } from "./utils.js";
 let context:Context;
 
@@ -18,6 +23,11 @@ export const init_context = () => {
 	const url_params = new URLSearchParams(url_arg_str);
 	const subid = url_params.get('subid');
 	const box_ip = window.location.href.split('/')[2].split(':')[0];
+
+	const rect:Rectangle = {x: 0, y:0, w:100, h:100};
+	const button:Button = new Button(rect, undefined, undefined, undefined)
+
+	const sprite:DrawableRect = {...DEFAULT_DRAWABLE_RECT, boundingBox:rect};
 	console.log(subid);
 
 	let ws = new WebSocket("ws://" + box_ip + ":50079");
@@ -32,12 +42,12 @@ export const init_context = () => {
     // if (ws.readyState == WebSocket.CLOSED) {
     //     ws = new WebSocket("ws://" + box_ip + ":50079");
     // }
-
-	// context.ctx.fillStyle = "#808080";
-	// context.ctx.fillRect(0, 0, canvas.width, canvas.height);
-	// context.ctx.fillStyle = "#000000";
-	// context.ctx.font = "48px serif";
-	// context.ctx.fillText("Touch", 100, 100);
+	buttons_add(button);
+	button._hoverCallback = () => console.log("Hover");
+	button._touchStartCallback = () => console.log("Start");
+	button._touchEndCallback = () => console.log("End");
+	button._boundingBox = sprite.boundingBox;
+	drawablesAdd(sprite);
 
 	window.onload = () => {
 		context.dimensions.x = window.innerWidth;
