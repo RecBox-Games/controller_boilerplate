@@ -1,10 +1,6 @@
 // import { DEFAULTT_BUTTON_RECT, buttons_add } from "./button.js";
-import { buttons_add } from "./button.js";
-import { drawablesAdd } from "./draw.js";
 import { Context } from "./types/context.js";
-import { DEFAULT_DRAWABLE_RECT, DrawableRect } from "./types/drawables.js";
 import { Point, Rectangle } from "./types/shapes.js";
-import { Button } from "./types/triggerable.js";
 import { handleTouchCancel, handleClick, handleTouchEnd, handleTouchMove, handleTouchStart } from "./utils.js";
 let context:Context;
 
@@ -17,18 +13,12 @@ let drag_start_y = 0;
 export const get_context = () :Context => context;
 
 export const init_context = () => {
-	// (document.querySelector("body")as HTMLBodyElement).requestFullscreen();
 	const canvas:HTMLCanvasElement = document.querySelector("canvas") as HTMLCanvasElement;
 	const url_arg_str = window.location.search;
 	const url_params = new URLSearchParams(url_arg_str);
 	const subid = url_params.get('subid');
 	const box_ip = window.location.href.split('/')[2].split(':')[0];
 
-	const rect:Rectangle = {x: 0, y:0, w:100, h:100};
-	const button:Button = new Button(rect, undefined, undefined, undefined)
-
-	const sprite:DrawableRect = {...DEFAULT_DRAWABLE_RECT, boundingBox:rect};
-	console.log(subid);
 
 	let ws = new WebSocket("ws://" + box_ip + ":50079");
 	context = {
@@ -42,20 +32,17 @@ export const init_context = () => {
     // if (ws.readyState == WebSocket.CLOSED) {
     //     ws = new WebSocket("ws://" + box_ip + ":50079");
     // }
-	buttons_add(button);
-	button._hoverCallback = () => console.log("Hover");
-	button._touchStartCallback = () => console.log("Start");
-	button._touchEndCallback = () => console.log("End");
-	button._boundingBox = sprite.boundingBox;
-	drawablesAdd(sprite);
+    context.canvas.width = document.body.clientWidth;
+    context.canvas.height = document.body.clientHeight;
+    context.dimensions.x = document.body.clientWidth;
+    context.dimensions.y = document.body.clientHeight;
 
-	window.onload = () => {
-		context.dimensions.x = window.innerWidth;
-		context.dimensions.y = window.innerHeight;
-		// if (context.ws.readyState == WebSocket.CLOSED) {
-		// 	context.ws = new WebSocket("ws://" + box_ip + ":50079");
-		// }
-	}
+	// window.onload = () => {
+	// 	context.dimensions.x = window.innerWidth;
+	// 	context.dimensions.y = window.innerHeight;
+    //     context.canvas.width = document.body.clientWidth;
+    //     context.canvas.height = document.body.clientWidth;
+	// }
 
 
 	context.ws.onclose = (event) => {
@@ -63,7 +50,6 @@ export const init_context = () => {
 		ws = new WebSocket("ws://" + box_ip + ":50079");
 	}
 
-// wait for websocket to connect
 	context.ws.onopen = (event) => {
 		console.log("openned websocket")
 
@@ -79,16 +65,6 @@ export const init_context = () => {
 
 }
 
-
-
-// window.onload = () => {
-//     if (context.ws.readyState == WebSocket.CLOSED) {
-//         context.ws = new WebSocket("ws://" + box_ip + ":50079");
-//     }
-// }
-
-
-
 // wait for websocket to connect
 window.onresize = screenChange;
 window.onorientationchange = screenChange;
@@ -97,9 +73,6 @@ function screenChange() {
     context.canvas.width = window.innerWidth-1;
     context.canvas.height = window.innerHeight-1;
 
-    context.ctx.fillStyle = "#808080";
-    context.ctx.fillRect(0, 0, context.canvas.width, context.canvas.height);
-    console.log('resize fill');
     // onFlip(window.innerWidth, window.innerHeight);
 }
 
