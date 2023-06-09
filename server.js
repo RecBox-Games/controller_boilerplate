@@ -7,20 +7,20 @@ const __dirname = dirname(__filename);
 const app = express();
 
 
-app.use(express.static('/home/jjosephi/projects/recbox/controller_boilerplate/compiled'));
+app.use(express.static('/home/jjosephi/recbox/SystemApps/controller'));
 // endpoints
 
-// app.get('/index.js', (req, res) => {
-//     const endpointName = req.params.endpointName;
-// 	console.log("Requested index");
-//     res.sendFile(__dirname + '/index.js');
-// });
+app.get('/index.js', (req, res) => {
+    const endpointName = req.params.endpointName;
+	console.log("Requested index");
+    res.sendFile(__dirname + '/index.js');
+});
 
-// // app.get('/:endpointName', (req, res) => {
-// //     const endpointName = req.params.endpointName;
-// // 	console.log("Requested endpoint", endpointName);
-// //     res.sendFile('/home/jjosephi/projects/recbox/controller_boilerplate/compiled/controller_lib/' + endpointName + '.js');
-// // });
+app.get('/:endpointName', (req, res) => {
+    const endpointName = req.params.endpointName;
+	console.log("Requested endpoint", endpointName);
+    res.sendFile('/home/jjosephi/recbox/SystemApps/controller/' + endpointName + '.js');
+});
 
 // app.get('/:endpointName', (req, res) => {
 //     const endpointName = req.params.endpointName;

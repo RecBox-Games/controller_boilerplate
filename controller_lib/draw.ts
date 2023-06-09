@@ -1,7 +1,8 @@
 import { get_context } from "./init.js";
 import { Context } from "./types/context.js";
 import { DEFAULT_DRAWABLE_IMG, DEFAULT_DRAWABLE_RECT, DEFAULT_DRAWABLE_TEXT, DrawableImage, DrawableRect, DrawableText } from "./types/drawables.js";
-import { checkAllFieldsExist } from "./utils.js";
+import { Rectangle } from "./types/shapes.js";
+import { center_text, checkAllFieldsExist } from "./utils.js";
 
 let Idrawables: (DrawableImage | DrawableRect | DrawableText) [] = []
 
@@ -17,13 +18,13 @@ export const drawablesRenderAll = () => {
 	let ctx:Context = get_context();
 
 	// printDrawables();
-	ctx.ctx.fillStyle = "#808080";
-    ctx.ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+	// ctx.ctx.fillStyle = "#808080";
+    // ctx.ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 	for (let item of Idrawables)
 	{
 		drawableRenderSingle(ctx, item);
 	}
-	// Idrawables.length = 0;
+	Idrawables.length = 0;
 }
 
 
@@ -50,19 +51,52 @@ export const drawableRenderSingle = (ctx:Context, drawable:DrawableImage | Drawa
 	else if (checkAllFieldsExist(DEFAULT_DRAWABLE_IMG,drawable))
 	{
 		const img = drawable as DrawableImage;
-		if (img.image)
+		if (img.image && img.image.complete)
 		{
-			ctx.ctx.setTransform(img.scale, 0, 0, img.scale, 0, 0); // sets scale and origin
-			ctx.ctx.rotate(img.rotation);
-			ctx.ctx.drawImage(img.image, img.x, img.y);
+			// ctx.ctx.setTransform(img.scale, 0, 0, img.scale, 0, 0); // sets scale and origin
+			if (img.rotation)
+			{
+				if (img.dst)
+					ctx.ctx.translate(img.dst.x + img.image.width / 2, img.dst.y + img.image.height / 2)
+				ctx.ctx.rotate(Math.PI / 180 * img.rotation);
+				if (img.dst)
+					ctx.ctx.translate(-img.dst.x - img.image.width / 2, -img.dst.y  - img.image.height / 2)
+			}
+			if (img.scale)
+				ctx.ctx.scale(img.scale, img.scale);
+            // !src -> 2 args
+            // else 3 args
+            // If !dst, fullconst ctx:Context = get_context()
+
+            let dst:Rectangle = {x:0, y:0, w: ctx.dimensions.x, h:ctx.dimensions.y};
+            ctx.ctx.imageSmoothingEnabled = true;
+            if (img.dst)
+                dst = img.dst;
+            if (img.src)
+            {
+
+                 ctx.ctx.drawImage(img.image,
+                 img.src.x, img.src.y, img.src.w, img.src.h,
+                 dst.x,     dst.y,      dst.w,    dst.h);
+            }
+            else
+            {
+                ctx.ctx.drawImage(img.image, dst.x, dst.y, dst.w, dst.h);
+            }
 			ctx.ctx.setTransform(1,0,0,1,0,0);
+			// ctx.ctx.restore();
 		}
 	}
 	else if (checkAllFieldsExist(DEFAULT_DRAWABLE_TEXT,drawable))
 	{
 		const text = drawable as DrawableText;
+        // let oldFont = ctx.ctx.font;
 		ctx.ctx.fillStyle = text.color;
-		ctx.ctx.fillText(text.text as string, text.x, text.y);
+        ctx.ctx.font = text.font;
+        if (text.center)
+            text.coords = center_text(text.text,text.font, text.boundingBox);
+
+		ctx.ctx.fillText(text.text as string, text.coords.x, text.coords.y);
 	}
 	else throw "Drawable types matches none"
 }

@@ -6,6 +6,6 @@ export const cp_update = () =>
 	// printCList();
 	// printIList();
 	// drawClist();
-	drawablesRenderAll();
+	// drawablesRenderAll();
 	// drawablesPrint();
 }

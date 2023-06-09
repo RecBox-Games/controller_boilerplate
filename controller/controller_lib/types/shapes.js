@@ -9,11 +9,11 @@ const isLine = (compare) => {
 };
 const isRect = (compare) => {
     const correct = { x: 0, y: 0, w: 0, h: 0 };
-    return checkAllFieldsExist(correct, compare) && compare.w >= 0 && compare.h >= 0;
+    return checkAllFieldsExist(correct, compare);
 };
 const isCircle = (compare) => {
     const correct = { x: 0, y: 0, radius: 0 };
-    return checkAllFieldsExist(correct, compare) && compare.radius >= 0;
+    return checkAllFieldsExist(correct, compare);
 };
 const PointInCircle = (point, circle) => {
     return Math.sqrt(//??? IDK if this more comprehensible than a single line ?
