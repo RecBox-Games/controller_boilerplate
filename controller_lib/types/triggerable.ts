@@ -1,11 +1,13 @@
 import { Rectangle, Circle, Point, isCircle, isRect, PointInCircle, PointInRect } from "./shapes.js";
 import { NONE, TRIGGER_END, TRIGGER_HELD, TRIGGER_START } from "../macros.js";
-import { TOUCH_END, TOUCH_START } from "../utils.js";
+import { TOUCH_END, TOUCH_START, checkAllFieldsExist } from "../utils.js";
+import { DEFAULT_DRAWABLE_IMG, DEFAULT_DRAWABLE_RECT, DEFAULT_DRAWABLE_TEXT, DrawableImage, DrawableRect, DrawableText } from "./drawables.js";
 class Triggerable {
 	_active: boolean = true;
 	_state: number = NONE;
 	_isTriggered: Function;
 	_handleTrigger: Function;
+    data?: any;
 
 	constructor(isTriggered:Function, handleTrigger:Function){
 		this._isTriggered = isTriggered;
@@ -43,26 +45,45 @@ class Triggerable {
 
 }
 
-
+//TODO add a drawble optional field to buttons
 class  Button extends Triggerable{
 
 	_boundingBox: Rectangle | Circle;
 	_hoverCallback?: Function;
 	_touchStartCallback?: Function;
 	_touchEndCallback?: Function;
+    drawable?: DrawableText|DrawableImage|DrawableRect;
 
 	constructor(boundingBox: Rectangle | Circle, hoverCallback:Function |undefined, touchStartCallback:Function | undefined, touchEndCallback:Function | undefined) {
-		if (isRect(boundingBox))
-			super(checkRectTriggered, handleButtonTriggered)
+        let fn;
+
+        if (isRect(boundingBox))
+            fn = checkRectTriggered;
 		else if (isCircle(boundingBox))
-			super(checkCircleTriggered, handleButtonTriggered)
+            fn = checkCircleTriggered
 		else
 			throw "Making a button from unknown type (not rectangle or Circle)"
+        super(fn, handleButtonTriggered)
 		this._boundingBox = boundingBox;
 		this._hoverCallback = hoverCallback;
 		this._touchStartCallback = touchStartCallback;
 		this._touchEndCallback = touchEndCallback;
 	}
+
+    set_drawable = (drawable: DrawableText|DrawableImage|DrawableRect, linkBoudningBox:boolean) =>
+    {
+        this.drawable = drawable;
+        if (linkBoudningBox)
+        {
+            if (checkAllFieldsExist(DEFAULT_DRAWABLE_RECT,this.drawable))
+                (this.drawable as DrawableRect).boundingBox = (this._boundingBox as Rectangle);
+            if (checkAllFieldsExist(DEFAULT_DRAWABLE_IMG,this.drawable))
+                (this.drawable as DrawableImage).dst = (this._boundingBox as Rectangle);
+            if (checkAllFieldsExist(DEFAULT_DRAWABLE_TEXT,this.drawable))
+                (this.drawable as DrawableText).boundingBox = (this._boundingBox as Rectangle);
+        }
+    }
+
 
     tryTrigger = (touch:Point, touchType:number) =>
 	{
@@ -76,6 +97,7 @@ class  Button extends Triggerable{
         // console.log("troggered", current, "event", touchType);
          if (touchType == TOUCH_END)
             this._state = NONE;
+        return current;
 	}
 }
 

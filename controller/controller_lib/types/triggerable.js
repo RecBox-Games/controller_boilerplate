@@ -1,11 +1,13 @@
 import { isCircle, isRect, PointInCircle, PointInRect } from "./shapes.js";
 import { NONE, TRIGGER_END, TRIGGER_HELD, TRIGGER_START } from "../macros.js";
-import { TOUCH_END } from "../utils.js";
+import { TOUCH_END, checkAllFieldsExist } from "../utils.js";
+import { DEFAULT_DRAWABLE_IMG, DEFAULT_DRAWABLE_RECT, DEFAULT_DRAWABLE_TEXT } from "./drawables.js";
 class Triggerable {
     _active = true;
     _state = NONE;
     _isTriggered;
     _handleTrigger;
+    data;
     constructor(isTriggered, handleTrigger) {
         this._isTriggered = isTriggered;
         this._handleTrigger = handleTrigger;
@@ -41,23 +43,38 @@ class Triggerable {
             this._handleTrigger(this, args);
     };
 }
+//TODO add a drawble optional field to buttons
 class Button extends Triggerable {
     _boundingBox;
     _hoverCallback;
     _touchStartCallback;
     _touchEndCallback;
+    drawable;
     constructor(boundingBox, hoverCallback, touchStartCallback, touchEndCallback) {
+        let fn;
         if (isRect(boundingBox))
-            super(checkRectTriggered, handleButtonTriggered);
+            fn = checkRectTriggered;
         else if (isCircle(boundingBox))
-            super(checkCircleTriggered, handleButtonTriggered);
+            fn = checkCircleTriggered;
         else
             throw "Making a button from unknown type (not rectangle or Circle)";
+        super(fn, handleButtonTriggered);
         this._boundingBox = boundingBox;
         this._hoverCallback = hoverCallback;
         this._touchStartCallback = touchStartCallback;
         this._touchEndCallback = touchEndCallback;
     }
+    set_drawable = (drawable, linkBoudningBox) => {
+        this.drawable = drawable;
+        if (linkBoudningBox) {
+            if (checkAllFieldsExist(DEFAULT_DRAWABLE_RECT, this.drawable))
+                this.drawable.boundingBox = this._boundingBox;
+            if (checkAllFieldsExist(DEFAULT_DRAWABLE_IMG, this.drawable))
+                this.drawable.dst = this._boundingBox;
+            if (checkAllFieldsExist(DEFAULT_DRAWABLE_TEXT, this.drawable))
+                this.drawable.boundingBox = this._boundingBox;
+        }
+    };
     tryTrigger = (touch, touchType) => {
         const current = this._isTriggered(this, touch);
         //TODO Can do this with bit manipulation but idk how that goes in TS
@@ -69,6 +86,7 @@ class Button extends Triggerable {
         // console.log("troggered", current, "event", touchType);
         if (touchType == TOUCH_END)
             this._state = NONE;
+        return current;
     };
 }
 export const handleButtonTriggered = (self) => {
