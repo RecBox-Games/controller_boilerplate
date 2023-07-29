@@ -50,10 +50,6 @@ function getDrawables() {
 
 // ---- Touch Handlers ----
 
-// handleClick should only be used for testing in PC browser
-function handleClick(x, y) {
-    handleTouchStart(0, x, y);
-}
 
 // Handle a single touch as it starts
 function handleTouchStart(id, x, y) {
@@ -69,6 +65,7 @@ function handleTouchStart(id, x, y) {
     });
     needs_draw = true;
 }
+
 
 // Handle a single touch that has moved
 function handleTouchMove(id, x, y) {

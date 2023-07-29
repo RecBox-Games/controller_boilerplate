@@ -55,6 +55,14 @@ function screenChange() {
 window.onresize = screenChange;
 window.onOrientationChange = screenChange;
 
+// helpers
+function isMobile() {
+    //TODO: this function could probably be made to be more robust. tablets
+    //      need be handled as well
+    const regex = /Mobi|Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
+    return refex.test(navigator.userAgent);
+}
+
 // globals
 let drag_start_x = 0;
 let drag_start_y = 0;
@@ -86,33 +94,48 @@ ws.onopen = (event) => {
     });
 
 
-    window.addEventListener("touchstart", (event) => {
-        for (touch of event.changedTouches) {
-            handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
-    
-    window.addEventListener("touchmove", (event) => {
-        for (touch of event.changedTouches) {
-            handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
-    
-    window.addEventListener("touchend", (event) => {
-        for (touch of event.changedTouches) {
-            handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
-    
-    window.addEventListener("touchcancel", (event) => {
-        for (touch of event.changedTouches) {
-            handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
-
-    window.addEventListener('click', (event) => {
-        handleClick(event.clientX, event.clientY);
-    });
+    //if isMobile {
+	window.addEventListener("touchstart", (event) => {
+            for (touch of event.changedTouches) {
+		handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+	
+	window.addEventListener("touchmove", (event) => {
+            for (touch of event.changedTouches) {
+		handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+	
+	window.addEventListener("touchend", (event) => {
+            for (touch of event.changedTouches) {
+		handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+	
+	window.addEventListener("touchcancel", (event) => {
+            for (touch of event.changedTouches) {
+		handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+    //} else {
+    let isDragging = false;
+	window.addEventListener("mousedown", (event) => {
+	    handleTouchStart(1, event.pageX, event.pageY);
+	    isDragging = true;
+	});
+	
+	window.addEventListener("mousemove", (event) => {
+	    if (isDragging) {
+		handleTouchMove(1, event.pageX, event.pageY);
+	    }
+	});
+	
+	window.addEventListener("mouseup", (event) => {
+	    handleTouchEnd(1, event.pageX, event.pageY);
+	    isDragging = false;
+	});
+    //}    
 
     function draw_image(image, x, y, scalex, scaley, cx, cy, rotation) {
         ctx.setTransform(scalex, 0, 0, scaley, x, y); // sets scale and origin
