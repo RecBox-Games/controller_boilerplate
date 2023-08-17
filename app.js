@@ -61,6 +61,8 @@ function handleTouchStart(id, x, y) {
         image: logo_image,
         x: x,
         y: y,
+	centeredX: true,
+	centeredY: true,
         rotation: 0,
     });
     needs_draw = true;

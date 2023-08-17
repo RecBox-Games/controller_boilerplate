@@ -21,7 +21,6 @@ console.log('aight');
 
 
 
-
 const url_arg_str = window.location.search;
 const url_params = new URLSearchParams(url_arg_str);
 const subid = url_params.get('subid');
@@ -32,15 +31,17 @@ console.log(subid);
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth-1;
-canvas.height = window.innerHeight-1;
+canvas.width = window.innerWidth-4;
+canvas.height = window.innerHeight-4;
 
 ctx.fillStyle = "#808080";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
 ctx.fillStyle = "#000000";
-ctx.font = "48px serif";
+/*ctx.font = "48px serif";
 ctx.fillText("Touch", 100, 100);
+*/
 
+var touch_recognized = false
 
 function screenChange() {
     canvas.width = window.innerWidth-1;
@@ -94,32 +95,34 @@ ws.onopen = (event) => {
     });
 
 
-    //if isMobile {
-	window.addEventListener("touchstart", (event) => {
-            for (touch of event.changedTouches) {
-		handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
-            }
-	});
-	
-	window.addEventListener("touchmove", (event) => {
-            for (touch of event.changedTouches) {
-		handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
-            }
-	});
-	
-	window.addEventListener("touchend", (event) => {
-            for (touch of event.changedTouches) {
-		handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
-            }
-	});
-	
-	window.addEventListener("touchcancel", (event) => {
-            for (touch of event.changedTouches) {
-		handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
-            }
-	});
-    //} else {
-    let isDragging = false;
+    window.addEventListener("touchstart", (event) => {
+	touch_recognized = true
+        for (touch of event.changedTouches) {
+	    handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
+        }
+    });
+    
+    window.addEventListener("touchmove", (event) => {
+        for (touch of event.changedTouches) {
+	    handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
+        }
+    });
+    
+    window.addEventListener("touchend", (event) => {
+        for (touch of event.changedTouches) {
+	    handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
+        }
+    });
+    
+    window.addEventListener("touchcancel", (event) => {
+        for (touch of event.changedTouches) {
+	    handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
+        }
+    });
+
+    if (! touch_recognized) {
+	console.log("touch not recognized");
+	let isDragging = false;
 	window.addEventListener("mousedown", (event) => {
 	    handleTouchStart(1, event.pageX, event.pageY);
 	    isDragging = true;
@@ -135,12 +138,18 @@ ws.onopen = (event) => {
 	    handleTouchEnd(1, event.pageX, event.pageY);
 	    isDragging = false;
 	});
-    //}    
+    }    
 
     function draw_image(image, x, y, scalex, scaley, cx, cy, rotation) {
+	if (cx) {
+	    x = x - image.width/2;
+	}
+	if (cy) {
+	    y = y - image.height/2;
+	}
         ctx.setTransform(scalex, 0, 0, scaley, x, y); // sets scale and origin
         ctx.rotate(rotation);
-        ctx.drawImage(image, cx, cy);
+        ctx.drawImage(image, 0, 0);
         ctx.setTransform(1,0,0,1,0,0);
     }
 
@@ -224,6 +233,6 @@ ws.onopen = (event) => {
         }
     }
 
-    controlpadStart();
+    controlpadStart(canvas.width, canvas.height);
     setInterval(tick, 33);
 }
