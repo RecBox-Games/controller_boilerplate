@@ -1,31 +1,12 @@
-/*let myArray = []; // Define an empty global array
+// determine if this is a touch device like a phone or tablet or DevTools emulation
+const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 
-function createObject() {
-  const myObject = { // Define a new object inside the function
-    id: 1,
-    name: "John Doe",
-    age: 30
-  };
-  
-  myArray.push(myObject); // Append the new object to the global array
-}
-
-createObject(); // Call the function to create and append the object
-console.log(myArray); // Output: [{id: 1, name: "John Doe", age: 30}]
-
-// Access the object from the global array later
-const myObjectFromArray = myArray[0];
-console.log(myObjectFromArray); // Output: {id: 1, name: "John Doe", age: 30}
-console.log('aight');
-*/
-
-
-
+// parse the url for sub ID
 const url_arg_str = window.location.search;
 const url_params = new URLSearchParams(url_arg_str);
 const subid = url_params.get('subid');
 const box_ip = window.location.href.split('/')[2].split(':')[0];
-console.log(subid);
+console.log("Sub ID: " + subid);
 
 // canvas
 const canvas = document.querySelector("canvas");
@@ -94,34 +75,37 @@ ws.onopen = (event) => {
         handleMessage(msg);
     });
 
-
-    window.addEventListener("touchstart", (event) => {
-	touch_recognized = true
-        for (touch of event.changedTouches) {
-	    handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
+    let lastTimeMove = new Date().getTime();
     
-    window.addEventListener("touchmove", (event) => {
-        for (touch of event.changedTouches) {
-	    handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
-    
-    window.addEventListener("touchend", (event) => {
-        for (touch of event.changedTouches) {
-	    handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
-    
-    window.addEventListener("touchcancel", (event) => {
-        for (touch of event.changedTouches) {
-	    handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
-        }
-    });
-
-    if (! touch_recognized) {
-	console.log("touch not recognized");
+    if (isTouchDevice) {
+	window.addEventListener("touchstart", (event) => {
+            for (touch of event.changedTouches) {
+		handleTouchStart(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+	
+	window.addEventListener("touchmove", (event) => {
+	    let thisTime = new Date().getTime();
+	    if (thisTime - lastTimeMove < 50)
+		return;
+	    lastTimeMove=thisTime;
+            for (touch of event.changedTouches) {
+		handleTouchMove(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+	
+	window.addEventListener("touchend", (event) => {
+            for (touch of event.changedTouches) {
+		handleTouchEnd(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+	
+	window.addEventListener("touchcancel", (event) => {
+            for (touch of event.changedTouches) {
+		handleTouchCancel(touch.identifier, touch.pageX, touch.pageY);
+            }
+	});
+    } else {
 	let isDragging = false;
 	window.addEventListener("mousedown", (event) => {
 	    handleTouchStart(1, event.pageX, event.pageY);
@@ -129,6 +113,10 @@ ws.onopen = (event) => {
 	});
 	
 	window.addEventListener("mousemove", (event) => {
+	    let thisTime = new Date().getTime();
+	    if (thisTime - lastTimeMove < 50)
+		return;
+	    lastTimeMove=thisTime;
 	    if (isDragging) {
 		handleTouchMove(1, event.pageX, event.pageY);
 	    }
