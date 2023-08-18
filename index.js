@@ -11,9 +11,10 @@ console.log("Sub ID: " + subid);
 // canvas
 const canvas = document.querySelector("canvas");
 const ctx = canvas.getContext("2d");
+const offset = 4;
 
-canvas.width = window.innerWidth-4;
-canvas.height = window.innerHeight-4;
+canvas.width = window.innerWidth-offset;
+canvas.height = window.innerHeight-offset;
 
 ctx.fillStyle = "#808080";
 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -25,8 +26,8 @@ ctx.fillText("Touch", 100, 100);
 var touch_recognized = false
 
 function screenChange() {
-    canvas.width = window.innerWidth-1;
-    canvas.height = window.innerHeight-1;
+    canvas.width = window.innerWidth-offset;
+    canvas.height = window.innerHeight-offset;
 
     ctx.fillStyle = "#808080";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -186,8 +187,8 @@ ws.onopen = (event) => {
             if (! drbl.y) { drbl.y = 0; }
             if (! drbl.scaleX) { drbl.scaleX = 1; }            
             if (! drbl.scaleY) { drbl.scaleY = 1; }
-            if (! drbl.centeredX) { drbl.centeredX = -drbl.image.width / 2; }
-            if (! drbl.centeredY) { drbl.centeredY = -drbl.image.height / 2; }
+            if (! drbl.centeredX) { drbl.centeredX = false; }
+            if (! drbl.centeredY) { drbl.centeredY = false; }
             if (! drbl.rotation) { drbl.rotation = 0; }
             draw_image(drbl.image, drbl.x, drbl.y, drbl.scaleX, drbl.scaleY,
                        drbl.centeredX, drbl.centeredY, drbl.rotation);
